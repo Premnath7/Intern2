@@ -1,0 +1,85 @@
+#include <stdio.h>
+int suduko(char a[9][9],char *b);
+int Find(char grid[9][9], int *row, int *col);
+int Find(char grid[9][9], int *row, int *col)
+{
+	for (*row = 0; *row < 9; (*row)++)
+	{ 
+		for (*col = 0; *col < 9; (*col)++)
+		{ 
+			if (grid[*row][*col] == '-')
+			return 1;
+	
+		}
+	}
+	return 0;
+}
+int suduko(char a[9][9],char *b)
+{
+	int m, n;
+        if (!Find(a, &m, &n))
+        return 1; 
+	int check,i,j,rm,rn,k,l;
+	
+	for(i=0;i<9;i++)
+	{
+				check=1;
+				for(j=0;j<9;j++)
+					if(b[i]==a[m][j])
+					{check=0;break;}
+				for(j=0;j<9;j++)
+					if(b[i]==a[j][n])
+					{check=0;break;}
+				rm=m/3;
+				rn=n/3;
+				for(j=rm*3;j<(rm+1)*3;j++)
+				{
+				for(k=rn*3;k<(rn+1)*3;k++)
+				{
+					if(a[j][k]==b[i])
+					{check=0;break;}
+				}
+				if(check==0)
+				break;
+				}
+				if(check==1)
+				{
+					a[m][n]=b[i];
+					if(suduko(a,b))
+					return 1;
+					else
+					a[m][n]='-';
+					
+					
+				}
+	}
+	return 0;
+}
+int main(int argc,char *argv[])
+{
+	int i,j;int row,col;
+	FILE *f1=fopen(argv[1],"r");
+	FILE *f2=fopen(argv[2],"w");
+	char a[9],s[9][9];
+	for(i=0;i<8;i++)
+	fscanf(f1,"%c,",&a[i]);
+	fscanf(f1,"%c\n",&a[i]);
+	for(i=0;i<9;i++)
+	{
+		for(j=0;j<8;j++)
+		fscanf(f1,"%c,",&s[i][j]);
+		fscanf(f1,"%c\n",&s[i][j]);
+	}
+	if(suduko(s,a))
+	{
+		for ( row = 0; row < 9; row++)
+		{
+			for ( col = 0; col < 8; col++)
+			fprintf(f2,"%c,", s[row][col]);
+			fprintf(f2,"%c\n", s[row][col]);
+		}
+	}
+	else          
+        fprintf(f2,"No solution");
+}
+
